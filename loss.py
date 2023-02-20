@@ -25,10 +25,13 @@ class CategoricalCrossEntropy(Loss):
     """
     Categorical Cross Entropy Loss
     """
-    
+
+    def __init__(self):
+        self.dinputs = None
+
     def forward(self, y_pred, y_true):
         """
-        Forward pass of the loss function, which computes the loss. Works for categorical and one-hot encoded labels
+        Forward pass of the CCE loss function. Works for categorical and one-hot encoded labels
         :param y_pred: the predictions
         :param y_true: the actual values
         :return: the negative log likelihood
@@ -51,5 +54,23 @@ class CategoricalCrossEntropy(Loss):
 
         # return the negative log
         return -np.log(correct_confidences)
+
+    def backward(self, dvalues, y_true):
+        """
+        Backwards pass of CCE. Computes the normalized gradiant, converting y_true if needed to one-hot encoded vector
+        :param dvalues: derivative values
+        :param y_true: actual values
+        :return: the normalized gradiant
+        """
+        # if labels are sparse, convert to one-hot vector
+        if len(y_true.shape == 1):
+            # eye creates a list of one-hot encoded vectors based on the passed in int
+            y_true = np.eye(len(dvalues[0]))[y_true]
+
+        # normalized gradiant
+        self.dinputs = (-y_true / dvalues) / len(dvalues)
+
+        return self.dinputs
+
 
 
