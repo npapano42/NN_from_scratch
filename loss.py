@@ -63,7 +63,7 @@ class CategoricalCrossEntropy(Loss):
         :return: the normalized gradiant
         """
         # if labels are sparse, convert to one-hot vector
-        if len(y_true.shape == 1):
+        if len(y_true.shape) == 1:
             # eye creates a list of one-hot encoded vectors based on the passed in int
             y_true = np.eye(len(dvalues[0]))[y_true]
 

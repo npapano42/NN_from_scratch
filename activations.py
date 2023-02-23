@@ -35,14 +35,21 @@ class Softmax:
     Softmax activation function class
     """
 
+    def __init__(self):
+        self.inputs = None
+        self.output = None
+        self.dinputs = None
+
     def forward(self, inputs):
         """
         Computes the output of the softmax function, which exponentiates the output then returns the normalized values
         :param inputs: the input list
         :return: the list after applying the softmax function
         """
+        self.inputs = inputs
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
-        return exp_values / np.sum(exp_values, axis=1, keepdims=True)
+        self.output = exp_values / np.sum(exp_values, axis=1, keepdims=True)
+        return self.output
 
     def backward(self, dvalues):
         self.dinputs = np.empty_like(dvalues)
@@ -56,3 +63,5 @@ class Softmax:
             jacobian_matrix = np.diagflat(single_output) - np.dot(single_output, single_output.T)
 
             self.dinputs[index] = np.dot(jacobian_matrix, single_dvalues)
+
+        return self.dinputs
